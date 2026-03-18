@@ -1,12 +1,71 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:f="jakarta.faces.core"
       xmlns:h="jakarta.faces.html">
-<f:view>
-  <h:head></h:head>
-  <h:body>
 
-  </h:body>
-</f:view>
+<h:head>
+    <title>Chat</title>
+</h:head>
+
+<h:body>
+    <h2>Välkommen #{appUserSessionBean.loggedInUser.username}</h2>
+
+    <h:form>
+        <h:commandButton value="Logga ut" action="#{loginBean.logout}"/>
+    </h:form>
+
+    <h3>WebSocket-status</h3>
+
+    <div>
+        <input type="text" id="messageInput" placeholder="Skriv ett meddelande..."/>
+        <button type="button" onclick="sendMessage()">Skicka</button>
+    </div>
+
+    <br/>
+
+    <div id="messages"></div>
+
+    <script type="text/javascript">
+        const ws = new WebSocket("ws://localhost:8080/websocket-server/chat");
+
+        function addMessage(text) {
+            const p = document.createElement("p");
+            p.textContent = text;
+            document.getElementById("messages").appendChild(p);
+        }
+
+        ws.onopen = function () {
+            addMessage("Ansluten till WebSocket-servern");
+        };
+
+        ws.onmessage = function (event) {
+            addMessage(event.data);
+        };
+
+        ws.onclose = function () {
+            addMessage("Anslutningen stängdes");
+        };
+
+        ws.onerror = function () {
+            addMessage("Ett fel uppstod i WebSocket-anslutningen");
+        };
+
+        function sendMessage() {
+            const input = document.getElementById("messageInput");
+            const message = input.value.trim();
+
+            if (message !== "") {
+                ws.send(message);
+                input.value = "";
+            }
+        }
+
+        document.getElementById("messageInput").addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</h:body>
 </html>

@@ -1,12 +1,35 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:f="jakarta.faces.core"
       xmlns:h="jakarta.faces.html">
-<f:view>
-  <h:head></h:head>
-  <h:body>
 
-  </h:body>
-</f:view>
+<h:head>
+    <title>Login</title>
+</h:head>
+
+<h:body>
+    <h2>Logga in</h2>
+
+    <h:form>
+        <h:panelGrid columns="2">
+            <h:outputLabel for="username" value="Username:"/>
+            <h:inputText id="username" value="#{loginBean.username}" required="true"/>
+
+            <h:outputLabel for="password" value="Password:"/>
+            <h:inputSecret id="password" value="#{loginBean.password}" required="true"/>
+        </h:panelGrid>
+
+        <br/>
+
+        <h:commandButton value="Logga in" action="#{loginBean.login}"/>
+
+        <br/><br/>
+        <h:messages/>
+    </h:form>
+
+    <br/>
+    <p>Har du inget konto?</p>
+    <h:link value="Skapa nytt konto" outcome="app-users.xhtml"/>
+
+</h:body>
 </html>
